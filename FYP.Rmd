@@ -1,0 +1,43 @@
+
+1. Creation of a github account to manage R code base.
+ - Go to www.github.com
+
+2. Commencement of a latex document to serve as Final Year Report
+ - Create a master FYP file ( something like "myFYP.tex")
+ - Create a master Bib file ( something like "myBib.tex")
+ - "Bib" is short for bibliography, which deals with citations.
+
+
+3. Compiling a bibtex file.
+ - go to scholar.google.com
+ - For relevant entry, click on quotation symbol (Second from left, where first symbol is a "star")
+ - A dialogue box, labelled "Cite", should appear on screen
+ - Go to the bottom of this dialogue box, and clink on "Bibtex"
+ - A plain text html file should appear. Copy and Paste the contents of this into your Bib file.
+ 
+
+4. Important LaTex Skills
+ - Practice creating equations in Latex.
+ - Fraction, subscripts, superscripts, greek letters, Summation Symbols
+ - Importing graphics into a latex document ( \includegraphics{})
+
+
+5. Key Forestry Terms
+ - Develop a familarity with key forestry metrics and terms
+ - DBH, Basal Area, Stems, Logs, Plot
+
+
+6. The lmfor R package
+ - install the lmfor R package
+ - Get the documentation for the R package on CRAN.
+ - Pay special attention to the Growth models ( Naslund, Wykoff etc)
+
+
+7. Useful Statistical Knowledge
+ - RMSE, AIC
+ - Residuals
+ - Mean Absolute Error  
+
+8. LiDAR
+ - Develop a familiarity with some key concepts of LiDAR.
+ - As a practice exercise for Latex, write a short paragraph on LiDAR as a latex document.
