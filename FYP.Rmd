@@ -37,6 +37,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ### 5. Key Forestry Terms
  - Develop a familarity with key forestry metrics and terms
  - DBH, Basal Area, Stems, Logs, Plot
+ - Review context of Stem Taper Equations - (this is a good review article: https://www.fs.fed.us/nrs/pubs/gtr/gtr-nrs-p-167papers/27-larsen_2016-CHFC.pdf)
+ - Also - Kevin to provide Brian with the BFC Mensuration Book 
  - ***Status:*** In Progress
 
 ### 6. The lmfor R package
