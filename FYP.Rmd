@@ -1,43 +1,95 @@
+---
+title: "Final Year Project"
+author: "Forest Analytics Research Office"
+output: html_document
+---
 
-1. Creation of a github account to manage R code base.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### 1. Creation of a github account to manage R code base.
  - Go to www.github.com
+ - ***Status:*** Completed
 
-2. Commencement of a latex document to serve as Final Year Report
+### 2. Commencement of a latex document to serve as Final Year Report
  - Create a master FYP file ( something like "myFYP.tex")
  - Create a master Bib file ( something like "myBib.tex")
  - "Bib" is short for bibliography, which deals with citations.
+ - ***Status:*** Actioned and Reverted to in subsequent items
 
 
-3. Compiling a bibtex file.
+### 3. Compiling a bibtex file.
  - go to scholar.google.com
  - For relevant entry, click on quotation symbol (Second from left, where first symbol is a "star")
  - A dialogue box, labelled "Cite", should appear on screen
  - Go to the bottom of this dialogue box, and clink on "Bibtex"
  - A plain text html file should appear. Copy and Paste the contents of this into your Bib file.
- 
+ - ***Status:*** In Progress
 
-4. Important LaTex Skills
+### 4. Important LaTex Skills
  - Practice creating equations in Latex.
  - Fraction, subscripts, superscripts, greek letters, Summation Symbols
  - Importing graphics into a latex document ( \includegraphics{})
+ - ***Status:*** Reverted to in subsequent items
 
-
-5. Key Forestry Terms
+### 5. Key Forestry Terms
  - Develop a familarity with key forestry metrics and terms
  - DBH, Basal Area, Stems, Logs, Plot
+ - ***Status:*** In Progress
 
-
-6. The lmfor R package
+### 6. The lmfor R package
  - install the lmfor R package
  - Get the documentation for the R package on CRAN.
  - Pay special attention to the Growth models ( Naslund, Wykoff etc)
+ - ***Status:*** In Progress
 
-
-7. Useful Statistical Knowledge
+### 7. Useful Statistical Knowledge
  - RMSE, AIC
  - Residuals
  - Mean Absolute Error  
-
-8. LiDAR
+ - ***Status:*** In Progress
+ 
+### 8. LiDAR
  - Develop a familiarity with some key concepts of LiDAR.
  - As a practice exercise for Latex, write a short paragraph on LiDAR as a latex document.
+ - ***Status:*** Initiated. Reverted to in subsequent items.
+ 
+ 
+### 9. Bibliography
+ - incorporating a bibliography ( based on a bib. file)
+
+### 10. Latex Improvements : Graphics and Captions
+ - *(Successor of item 2)*
+ - adding labels and captions to the graphics 
+ - Simply including "\label{graphic1.jpg}" and "\caption{graphic1.jpg}" to the "includegraphics" part of the   latex code.
+
+### 11. Latex Improvements : Equations
+ - Incorporating equations into the latex code. 
+ - For the sake of expediency, you should probably focus on some of the growth model equations listed here 
+ (see pages 9 and 10)
+ <pre><code>
+ https://cran.r-project.org/web/packages/lmfor/lmfor.pdf
+ </code></pre>
+ 
+### 12. Imputing Heights with lmfor
+ - With regards to fitting the model, I would suggest trying out the "imputeHeights()" function in 
+ lmfor on the "trees" data set.
+ - Try out the default model, which I believe to be the Naslund model.
+ - After that, see if you can adjust it to other models described in the CRAN reference (i.e. Wykoff, etc)
+
+
+### 13. Residual Analysis 
+ - The "imputeHeights()"  function does not require you to split the data up, it will create new columns on the data frame. 
+ - What is of interest is the residuals, i.e. difference between observed Heights, and heights predicted by the model. I propose that you compute the residuals and from that, the RMSE.
+
+- For later, you can analyse the residuals, categorized by Species (SPP) , and also by Geographic location.
+
+### 14. Developing Geographic Categorical Variables 
+
+ - Adding Geographic categorical variables would require the county code to be clearly identified as a stand-alone variable.  
+- This can be carried out with the "mutate" (from dplyr) and "substr". 
+
+
+ 
