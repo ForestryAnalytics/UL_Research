@@ -1,0 +1,242 @@
+library(janitor)
+library(officer)
+library(flextable)
+
+
+big_border = fp_border(color="black", width = 2)
+border_v = fp_border(color="gray")
+border_h = fp_border(color="gray")
+
+
+
+bold_face_1 <- shortcuts$fp_bold(font.size = 24)
+bold_face_2 <- shortcuts$fp_bold(font.size = 20)
+bold_redface <- update(bold_face_1, color = "red")
+
+
+HB_Details <- sqlFetch(conAccdb,"01HB_Details")
+CountyDev <- sqlFetch(conAccdb,"InCombo_County_Development_Plans")
+MyPlans <- sqlFetch(conAccdb,"InCombo_MyPlans")
+ABP <- sqlFetch(conAccdb,"InCombo_An_Bord_Pleanala")
+
+ScreenedIn <- sqlFetch(conAccdb,"03HBs_Screened_In")
+
+
+myFLList <- HB_Details$FL_App_Ref %>% as.character()
+
+#for(i in 1:length(myFLList )) {                       
+
+for(i in 215:220) {  
+
+    
+THIS_REF_CODE <- HB_Details$FL_App_Ref[i] %>% as.character()
+THIS_Townland <- HB_Details$Townlands[i] %>% as.character()
+THIS_FOREST_ACTIVITY <- HB_Details$Harv_Type[i] %>% as.character()
+THIS_COUNTY <- HB_Details$County[i]  %>% as.character()
+FINAL_SCORE <- HB_Details$Final_Score[i] %>% as.character()
+
+
+my_doc <- read_docx("S:/KOB_data_warehouse/10_SAC_REPORT/Template_PartA.docx")
+
+#my_doc <- my_doc %>% body_replace_all_text("Leadout Header", "", only_at_cursor = FALSE)
+#my_doc <- my_doc %>% body_replace_all_text("Leadout Text", "", only_at_cursor = FALSE)
+
+
+
+my_doc <- my_doc %>% body_replace_all_text("Forestry Activity", THIS_FOREST_ACTIVITY, only_at_cursor = FALSE)
+my_doc <- my_doc %>% body_replace_all_text("File Ref. No.", THIS_REF_CODE, only_at_cursor = FALSE)
+my_doc <- my_doc %>% body_replace_all_text("DATE", as.character(Sys.Date()) , only_at_cursor = FALSE)
+my_doc <- my_doc %>% body_replace_all_text("Townland\\(s\\)",THIS_Townland, only_at_cursor = FALSE)
+my_doc <- my_doc %>% body_replace_all_text("County Name\\(s\\)",THIS_COUNTY, only_at_cursor = FALSE)
+
+###### Project Description ####
+
+Project_description_FileName <- paste("S:/KOB_data_warehouse/03_Felling_Licenses",myFLList[i],"Project_description.docx",sep="/")
+
+
+
+my_doc <- my_doc %>%
+  body_add_break() %>%
+  body_add_docx(src = Project_description_FileName  ) 
+
+#### Felling Licencses ####
+
+#FL_pdf_FileName <- paste(myFLList[i],"_FellingLicence_mini.docx",sep="")
+#FL_pdf_PathName <- paste("S:/KOB_data_warehouse/03_FL_Resources/PDFimages",myFLList[i],FL_pdf_FileName,sep="/")
+
+#my_doc <- my_doc %>%
+#  body_add_break() %>%
+#  body_add_docx(src = FL_pdf_PathName  )  %>%
+#  body_add_break()
+
+
+###### AA Description ####
+
+#AA_Table1_FileName <- paste("S:/KOB_data_warehouse/03_Felling_Licenses",myFLList[i],"AA_tables.docx",sep="/")
+
+
+
+#my_doc <- my_doc %>%
+#  body_add_break() %>%
+#  body_add_docx(src = AA_Table1_FileName )  %>%
+#  body_end_section_portrait()
+
+
+#### QI Table  #####
+
+QITableFile<- paste(outputTarget,myFLList[i],"QI_table.docx",sep="/")
+
+my_doc <- my_doc %>%
+body_add_docx(src = QITableFile ) %>%  body_end_section_landscape()
+
+###### Template Text ####
+
+
+
+ScreenedIn <- sqlFetch(conAccdb,"03HBs_Screened_In")
+
+Sitenames <- ScreenedIn %>% filter(FL_App_Ref==myFLList[i]) %>% pull(Sitename) %>% as.character() %>% unique()
+
+if(length(Sitenames)==1){
+  SiteNameText <- Sitenames[1]
+}
+
+if(length(Sitenames)==2){
+  SiteNameText <- paste(Sitenames[1],Sitenames[2],sep=" and ")
+}
+
+if(length(Sitenames)>2){
+  n=length(Sitenames)
+  SiteNameText <- paste0(Sitenames[1:(n-1)],collapse=", ")
+  SiteNameText <- paste(SiteNameText,Sitenames[2],sep=" and ")
+}
+
+TemplateB <- read_docx("S:/KOB_data_warehouse/10_SAC_REPORT/Template_PartB.docx")
+TemplateB <- TemplateB %>% body_replace_all_text("Screened-In Natura Site #1, Screened-In Natura Site #2 and Screened-In Natura Site #3", SiteNameText, only_at_cursor = FALSE)
+
+outputTarget <- c("S:/KOB_data_warehouse/03_Felling_Licenses/")
+
+TemplateB_insert <- paste(outputTarget,myFLList[i],"Template_B_insert.docx",sep="/")
+print(TemplateB, target = TemplateB_insert)
+
+my_doc <- my_doc %>%
+  body_add_docx(src =TemplateB_insert  ) 
+
+
+#### InCombination  #####
+In_Combination_FileName <- "In_Combination_Sub_Report.docx"
+In_Combination_PathName <- paste("S:/KOB_data_warehouse/03_Felling_Licenses",myFLList[i],In_Combination_FileName,sep="/")
+
+my_doc <- my_doc %>%
+  body_add_docx(src = In_Combination_PathName  )  %>%
+  body_add_break()
+
+
+#### Closing Text #####
+my_doc_closing <- read_docx("S:/KOB_data_warehouse/10_SAC_REPORT/Template_PartD.docx")
+
+#my_doc_closing <- my_doc_closing %>% body_replace_all_text("Leadout Header", "", only_at_cursor = FALSE)
+#my_doc_closing <- my_doc_closing %>% body_replace_all_text("Leadout Text", "", only_at_cursor = FALSE)
+
+
+ScreenedIn <- sqlFetch(conAccdb,"03HBs_Screened_In")
+
+Sitenames <- ScreenedIn %>% filter(FL_App_Ref==myFLList[i]) %>% pull(Sitename) %>% as.character() %>% unique()
+
+if(length(Sitenames)==1){
+  SiteNameText <- Sitenames[1]
+}
+
+if(length(Sitenames)==2){
+  SiteNameText <- paste(Sitenames[1],Sitenames[2],sep=" and ")
+}
+
+if(length(Sitenames)>2){
+  n=length(Sitenames)
+  SiteNameText <- paste0(Sitenames[1:(n-1)],collapse=", ")
+  SiteNameText <- paste(SiteNameText,Sitenames[2],sep=" and ")
+}
+
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("Screened-In Natura Site #1, Screened-In Natura Site #2 and Screened-In Natura Site #3", SiteNameText, only_at_cursor = FALSE)
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("Forestry Activity", THIS_FOREST_ACTIVITY, only_at_cursor = FALSE)
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("File Ref. No.", THIS_REF_CODE, only_at_cursor = FALSE)
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("DATE", as.character(Sys.Date()) , only_at_cursor = FALSE)
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("Townland\\(s\\)",THIS_Townland, only_at_cursor = FALSE)
+my_doc_closing <- my_doc_closing %>% body_replace_all_text("County Name\\(s\\)",THIS_COUNTY, only_at_cursor = FALSE)
+outputTarget <- c("S:/KOB_data_warehouse/03_Felling_Licenses/")
+
+outFile <- paste(outputTarget,myFLList[i],"_Closing.docx",sep="/")
+print(my_doc_closing, target = outFile)
+
+
+my_doc <- my_doc %>%
+  body_add_docx(src = outFile  )
+
+
+
+HH <- sqlFetch(conAccdb,"03HBs_Screened_In") 
+
+
+thisScreening <- HH %>% filter(FL_App_Ref == myFLList[i])
+
+if( "Hen Harrier (Green)" %in% thisScreening$Protocol ){
+  AddSiteName <- thisScreening$Sitename[thisScreening$Protocol=="Hen Harrier (Green)"] %>% as.character() %>% unique()
+  
+  HH_Green_Protocol <- read_docx("S:/KOB_data_warehouse/10_SAC_REPORT/HenHarrierGreen.docx")
+  
+  HH_Green_Protocol <- HH_Green_Protocol %>% body_replace_all_text("THIS_SITE_NAME",AddSiteName , only_at_cursor = FALSE)
+  outputTarget <- c("S:/KOB_data_warehouse/03_Felling_Licenses/")
+  
+  outFile <- paste(outputTarget,myFLList[i],"HH_Green_Protocol.docx",sep="/")
+  print(HH_Green_Protocol, target = outFile)
+  
+  
+  
+  my_doc <- my_doc %>%
+    body_add_docx(src = outFile  )
+  
+}
+
+
+if( "Hen Harrier (Red)" %in% thisScreening$Protocol ){
+  AddSiteName <- thisScreening$Sitename[thisScreening$Protocol=="Hen Harrier (Red)"] %>% as.character() %>% unique()
+  
+ # file.exists("S:/KOB_data_warehouse/10_SAC_REPORT/HenHarrierRed.docx")
+  HH_Red_Protocol <- read_docx("S:/KOB_data_warehouse/10_SAC_REPORT/HenHarrierRed.docx")
+  
+  HH_Red_Protocol <- HH_Red_Protocol %>% body_replace_all_text("INSERTSITENAME",AddSiteName , only_at_cursor = FALSE)
+  HH_Red_Protocol <- HH_Red_Protocol %>% body_replace_all_text("THISFILEREF",myFLList[i] , only_at_cursor = FALSE)
+  outputTarget <- c("S:/KOB_data_warehouse/03_Felling_Licenses/")
+  
+  outFile <- paste(outputTarget,myFLList[i],"HH_Red_Protocol.docx",sep="/")
+  print(HH_Red_Protocol, target = outFile)
+  
+  
+  
+  my_doc <- my_doc %>%
+    body_add_docx(src = outFile  )
+  
+}
+
+
+
+
+
+#### Felling Licencses ####
+
+#FL_pdf_FileName <- paste(myFLList[i],"_FellingLicence.docx",sep="")
+#FL_pdf_PathName <- paste("S:/KOB_data_warehouse/03_FL_Resources/PDFimages",myFLList[i],FL_pdf_FileName,sep="/")
+#
+#my_doc <- my_doc %>%
+#  body_add_break() %>%
+#  body_add_docx(src = FL_pdf_PathName  )  %>%
+#  body_add_break()
+
+
+
+
+#### Export ####
+outputTarget <- c("S:/KOB_data_warehouse/03_Felling_Licenses/")
+outFile <- paste(outputTarget,myFLList[i],"FL.docx",sep="/")
+print(my_doc, target = outFile)
+}
